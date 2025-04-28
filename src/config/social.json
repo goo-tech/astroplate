@@ -3,22 +3,22 @@
     {
       "name": "facebook",
       "icon": "FaFacebook",
-      "link": "https://www.facebook.com/"
+      "link": "https://www.facebook.com/modernpaciran"
     },
     {
       "name": "twitter",
       "icon": "FaTwitter",
-      "link": "https://twitter.com/"
+      "link": "https://twitter.com/modernpaciran"
     },
     {
-      "name": "github",
-      "icon": "FaGithub",
-      "link": "https://www.github.com/"
+      "name": "instagram",
+      "icon": "FaInstagram",
+      "link": "https://www.instagram.com/modernoaciran"
     },
     {
-      "name": "linkedin",
-      "icon": "FaLinkedin",
-      "link": "https://www.linkedin.com/"
+      "name": "tiktok",
+      "icon": "FaTiktok",
+      "link": "https://www.tiktok.com/modernpaciran"
     }
   ]
 }
