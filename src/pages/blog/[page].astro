@@ -5,7 +5,7 @@ import BlogCard from "@/components/BlogCard.astro";
 import Pagination from "@/components/Pagination.astro";
 import PostSidebar from "@/partials/PostSidebar.astro";
 import PageHeader from "@/partials/PageHeader.astro";
-import { Base } from "@/layouts/Base.astro";
+import Base from "@/layouts/Base.astro";
 
 const { page } = Astro.params;
 const currentPage = parseInt(page) || 1;
