@@ -1,0 +1,29 @@
+---
+type PaginationNavProps = {
+  prevUrl?: string | null;
+  nextUrl?: string | null;
+};
+
+const { prevUrl, nextUrl }: PaginationNavProps = Astro.props;
+---
+<nav class="flex justify-between mt-8" aria-label="Simple pagination">
+  {prevUrl ? (
+    <a href={prevUrl} class="inline-flex items-center px-4 py-2 text-sm font-medium rounded bg-light hover:bg-light-dark dark:bg-darkmode-light dark:hover:bg-darkmode-light-dark">
+      ← Previous
+    </a>
+  ) : (
+    <span class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-400 dark:text-gray-600">
+      ← Previous
+    </span>
+  )}
+
+  {nextUrl ? (
+    <a href={nextUrl} class="inline-flex items-center px-4 py-2 text-sm font-medium rounded bg-light hover:bg-light-dark dark:bg-darkmode-light dark:hover:bg-darkmode-light-dark">
+      Next →
+    </a>
+  ) : (
+    <span class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-400 dark:text-gray-600">
+      Next →
+    </span>
+  )}
+</nav>

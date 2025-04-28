@@ -1,0 +1,61 @@
+---
+// src/pages/tag/[slug]/[page].astro
+
+---
+import Base from "@/layouts/Base.astro";
+import BlogCard from "@/components/BlogCard.astro";
+import Pagination from "@/components/Pagination.astro";
+import PostSidebar from "@/partials/PostSidebar.astro";
+import PageHeader from "@/partials/PageHeader.astro";
+
+import { fetchPostsByTag, fetchTagBySlug, fetchTotalPostCountByTag, fetchCategories, fetchTags } from "@/utils/fetchPosts";
+
+const { slug, page } = Astro.params;
+const currentPage = parseInt(page) || 1;
+const postsPerPage = 6;
+
+const tag = await fetchTagBySlug(slug);
+if (!tag) {
+  return Astro.redirect('/404');
+}
+
+const totalPosts = await fetchTotalPostCountByTag(tag.id);
+const totalPages = Math.ceil(totalPosts / postsPerPage);
+
+if (totalPosts === 0 || currentPage > totalPages) {
+  return Astro.redirect('/404');
+}
+if (currentPage === 1) {
+  return Astro.redirect(`/tag/${slug}`, 301);
+}
+
+const posts = await fetchPostsByTag(tag.id, currentPage, postsPerPage);
+const categories = await fetchCategories();
+const tags = await fetchTags();
+---
+
+<Base title={`Tag: ${tag.name} - Halaman ${currentPage}`}>
+  <PageHeader title={`Tag: ${tag.name}`} />
+  <section class="section">
+    <div class="container">
+      <div class="row gx-5">
+        <div class="lg:col-8">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {posts.map((post) => (
+              <BlogCard data={{
+                title: post.title.rendered,
+                excerpt: post.excerpt.rendered,
+                slug: post.slug,
+                image: post._embedded?.['wp:featuredmedia']?.[0]?.source_url,
+                date: post.date,
+              }} />
+            ))}
+          </div>
+          <Pagination section={`tag/${slug}`} currentPage={currentPage} totalPages={totalPages} />
+        </div>
+
+        <PostSidebar categories={categories} tags={tags} />
+      </div>
+    </div>
+  </section>
+</Base>

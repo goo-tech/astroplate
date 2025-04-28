@@ -1,14 +1,14 @@
 ---
-// src/pages/blog/index.astro
-import Base from "@/layouts/Base.astro";
+// src/pages/blog/[page].astro
+import { fetchPosts, fetchTotalPostCount, fetchCategories, fetchTags } from "@/utils/fetchPosts";
 import BlogCard from "@/components/BlogCard.astro";
 import Pagination from "@/components/Pagination.astro";
 import PostSidebar from "@/partials/PostSidebar.astro";
 import PageHeader from "@/partials/PageHeader.astro";
+import { Base } from "@/layouts/Base.astro";
 
-import { fetchPosts, fetchTotalPostCount, fetchCategories, fetchTags } from "@/utils/fetchPosts";
-
-const currentPage = 1;
+const { page } = Astro.params;
+const currentPage = parseInt(page) || 1;
 const postsPerPage = 6;
 
 const posts = await fetchPosts(currentPage, postsPerPage);
@@ -17,6 +17,12 @@ const totalPages = Math.ceil(totalPosts / postsPerPage);
 
 const categories = await fetchCategories();
 const tags = await fetchTags();
+
+// Menangani kasus jika halaman melebihi batas
+if (currentPage > totalPages) {
+  // Arahkan ke halaman 404 yang sudah disediakan
+  return Astro.redirect('/404');
+}
 ---
 
 <Base title="Blog">
