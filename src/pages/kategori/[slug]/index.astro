@@ -30,7 +30,11 @@ const categories = await fetchCategories();
 const tags = await fetchTags();
 ---
 
-<Base title={`Kategori: ${category.name}`}>
+<Base title={`Kategori: ${category?.name || 'Not Found'} - Halaman ${currentPage}`}>
+  {(!category || totalPosts === 0) ? (
+    <NotFound />
+  ) : (
+    <>
   <PageHeader title={`Kategori: ${category.name}`} />
   <section class="section">
     <div class="container">

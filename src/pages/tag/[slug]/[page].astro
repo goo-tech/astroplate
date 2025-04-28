@@ -34,7 +34,11 @@ const categories = await fetchCategories();
 const tags = await fetchTags();
 ---
 
-<Base title={`Tag: ${tag.name} - Halaman ${currentPage}`}>
+<Base title={tag ? `Tag: ${tag.name}` : "Tag Not Found"}>
+  {(!tag || totalPosts === 0 || currentPage > totalPages) ? (
+    <NotFound />
+  ) : (
+    <>
   <PageHeader title={`Tag: ${tag.name}`} />
   <section class="section">
     <div class="container">
