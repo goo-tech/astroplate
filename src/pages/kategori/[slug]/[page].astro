@@ -1,12 +1,11 @@
 ---
 // src/pages/kategori/[slug]/[page].astro
-
----
 import Base from "@/layouts/Base.astro";
 import BlogCard from "@/components/BlogCard.astro";
 import Pagination from "@/components/Pagination.astro";
 import PostSidebar from "@/partials/PostSidebar.astro";
 import PageHeader from "@/partials/PageHeader.astro";
+import NotFound from "@/components/common/NotFound.astro";
 
 import { fetchPostsByCategory, fetchCategoryBySlug, fetchTotalPostCountByCategory, fetchCategories, fetchTags } from "@/utils/fetchPosts";
 
@@ -15,47 +14,45 @@ const currentPage = parseInt(page) || 1;
 const postsPerPage = 6;
 
 const category = await fetchCategoryBySlug(slug);
-if (!category) {
-  return Astro.redirect('/404');
-}
-
-const totalPosts = await fetchTotalPostCountByCategory(category.id);
+const totalPosts = category ? await fetchTotalPostCountByCategory(category.id) : 0;
 const totalPages = Math.ceil(totalPosts / postsPerPage);
 
-if (totalPosts === 0 || currentPage > totalPages) {
-  return Astro.redirect('/404');
-}
-if (currentPage === 1) {
-  return Astro.redirect(`/kategori/${slug}`, 301);
-}
+const posts = category && totalPosts > 0 && currentPage <= totalPages
+  ? await fetchPostsByCategory(category.id, currentPage, postsPerPage)
+  : [];
 
-const posts = await fetchPostsByCategory(category.id, currentPage, postsPerPage);
 const categories = await fetchCategories();
 const tags = await fetchTags();
 ---
 
-<Base title={`Kategori: ${category.name} - Halaman ${currentPage}`}>
-  <PageHeader title={`Kategori: ${category.name}`} />
-  <section class="section">
-    <div class="container">
-      <div class="row gx-5">
-        <div class="lg:col-8">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {posts.map((post) => (
-              <BlogCard data={{
-                title: post.title.rendered,
-                excerpt: post.excerpt.rendered,
-                slug: post.slug,
-                image: post._embedded?.['wp:featuredmedia']?.[0]?.source_url,
-                date: post.date,
-              }} />
-            ))}
-          </div>
-          <Pagination section={`kategori/${slug}`} currentPage={currentPage} totalPages={totalPages} />
-        </div>
+<Base title={`Kategori: ${category?.name || 'Not Found'} - Halaman ${currentPage}`}>
+  {(!category || totalPosts === 0 || currentPage > totalPages) ? (
+    <NotFound />
+  ) : (
+    <>
+      <PageHeader title={`Kategori: ${category.name}`} />
+      <section class="section">
+        <div class="container">
+          <div class="row gx-5">
+            <div class="lg:col-8">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {posts.map((post) => (
+                  <BlogCard data={{
+                    title: post.title.rendered,
+                    excerpt: post.excerpt.rendered,
+                    slug: post.slug,
+                    image: post._embedded?.['wp:featuredmedia']?.[0]?.source_url,
+                    date: post.date,
+                  }} />
+                ))}
+              </div>
+              <Pagination section={`kategori/${slug}`} currentPage={currentPage} totalPages={totalPages} />
+            </div>
 
-        <PostSidebar categories={categories} tags={tags} />
-      </div>
-    </div>
-  </section>
+            <PostSidebar categories={categories} tags={tags} />
+          </div>
+        </div>
+      </section>
+    </>
+  )}
 </Base>
